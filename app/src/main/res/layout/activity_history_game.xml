@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/activity_history_game"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.ymq.badminton_rank.activity.HistoryGameActivity">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="比赛历史记录"
+        android:background="@color/colorPrimary"
+        android:gravity="center"
+        android:textColor="#fff"
+        android:padding="10dp"
+        android:textSize="22dp"/>
+    <GridView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:numColumns="1"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/gridview_history"></GridView>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:gravity="center"
+        android:text="返回首页"
+        android:onClick="backToMain"/>
+</LinearLayout>

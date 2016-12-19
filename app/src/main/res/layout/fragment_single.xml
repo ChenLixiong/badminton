@@ -1,0 +1,110 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+              android:orientation="vertical"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             tools:context="com.ymq.badminton_rank.fragment.DoubleFragment">
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="当前模式：单打"
+    android:textSize="22sp"/>
+
+    <!--<com.mikhaellopez.circularimageview.CircularImageView
+        android:id="@+id/img"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop"
+        android:src="@drawable/default_icon_man"
+        app:civ_border_color="#aaa"
+        app:civ_border_width="2dp"
+        app:civ_shadow="true"/>-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_margin="10dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="参赛人员列表："
+            android:layout_margin="10dp"
+            android:textSize="18sp"/>
+
+        <GridView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:numColumns="4"
+            android:id="@+id/gridview_member"></GridView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical|center"
+            android:text="姓名："
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FF565656"/>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/usernameWrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            >
+
+            <EditText
+                android:id="@+id/username"
+                android:layout_width="match_parent"
+                android:layout_height="53dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/edit_text_custom"
+                android:hint="请输入选手姓名"
+                android:imeActionId="666"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:singleLine="true"
+                android:textColor="#aaaaaa"
+                android:textColorHighlight="#aaaaaa"
+                android:textColorHint="#aaaaaa"
+                android:textColorLink="#aaaaaa"/>
+        </android.support.design.widget.TextInputLayout>
+
+    </LinearLayout>
+    <Button
+        android:id="@+id/btn_add"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:drawableLeft="@android:drawable/ic_input_add"
+        android:text="保存并继续添加"/>
+    <Button
+        android:id="@+id/btn_ok"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+
+        android:focusable="true"
+        android:focusableInTouchMode="false"
+        android:text="添加完成"
+
+        />
+</LinearLayout>
