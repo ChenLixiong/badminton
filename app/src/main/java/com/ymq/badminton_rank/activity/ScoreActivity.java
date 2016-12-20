@@ -108,7 +108,8 @@ public class ScoreActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return map== null ? 0 : map.size() ;
+//            return map== null ? 0 : map.size() ;
+            return  currentCount>map.size()? currentCount:map.size();
         }
 
         @Override
@@ -135,6 +136,8 @@ public class ScoreActivity extends AppCompatActivity {
                 }
                 tv_name.setText("第" + (length+1)+" 名 :"+name.toString());
                 length +=members.size();
+            }else {
+                return null ;
             }
             currentCount --;
             return convertView;
