@@ -13,11 +13,17 @@
         android:text="当前排名："
         android:textSize="20sp"
         android:id="@+id/tv_score"/>
-    <ListView
+    <TextView
+        android:id="@+id/tv_rank"
+        android:textSize="18sp"
+        android:padding="@dimen/common_dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:id="@+id/listview_score"></ListView>
+        android:elegantTextHeight="true"
+
+        android:text="第一名：1,2,34,5,2,5，\n第二名：8,1,5,4,5,6,9\n第三名：8,5.6,9,8,7，"
+        android:layout_weight="1"/>
+
 <Button
     android:layout_width="match_parent"
     android:layout_height="64dp"

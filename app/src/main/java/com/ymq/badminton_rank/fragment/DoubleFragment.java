@@ -81,13 +81,7 @@ public class DoubleFragment extends Fragment {
         mList = new ArrayList<DoubleMember>();
         mAdapter = new GridViewAdapter(mList);
         mGridtview_member.setAdapter(mAdapter);
-        TextView emptyView = new TextView(getActivity());
-        emptyView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        emptyView.setText("还没添加选手哦！");
-        emptyView.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL);
-        emptyView.setVisibility(View.GONE);
-        ((ViewGroup)mGridtview_member.getParent()).addView(emptyView);
-        mGridtview_member.setEmptyView(emptyView);
+
 
         //保存选手信息
         mBtn_add.setOnClickListener(new View.OnClickListener() {
@@ -164,6 +158,13 @@ public class DoubleFragment extends Fragment {
         mBtn_add = (Button) mView.findViewById(R.id.btn_add);
         mBtn_ok = (Button) mView.findViewById(R.id.btn_ok);
         mGridtview_member = ((GridView) mView.findViewById(R.id.gridview_member));
+        TextView emptyView = new TextView(getActivity());
+        emptyView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        emptyView.setText("还没添加选手哦！");
+        emptyView.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL);
+        emptyView.setVisibility(View.GONE);
+        ((ViewGroup)mGridtview_member.getParent()).addView(emptyView);
+        mGridtview_member.setEmptyView(emptyView);
 
     }
 

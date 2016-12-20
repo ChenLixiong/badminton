@@ -14,8 +14,6 @@ import com.ymq.badminton_rank.fragment.DoubleFragment;
 import com.ymq.badminton_rank.fragment.SingleFragment;
 import com.ymq.badminton_rank.view.SegmentButton;
 
-import java.util.ArrayList;
-
 public class MainActivity extends BaseActivity {
 
     private FragmentManager mSupportFragmentManager;
@@ -28,9 +26,9 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ArrayList<String> list = new ArrayList<>();
-        list.add("精确");
-        list.add("默认");
+//        ArrayList<String> list = new ArrayList<>();
+//        list.add("精确");
+//        list.add("默认");
 
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
         TextView tv_mode = (TextView) findViewById(R.id.tv_mode);
