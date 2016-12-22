@@ -151,7 +151,12 @@ public class DoubleFragment extends Fragment {
         });
     }
 
-
+    @Override
+    public void onPause() {
+        super.onPause();
+        mList = null;
+        mAdapter = null;
+    }
 
     private void initview() {
         mEt_username = (EditText) mView.findViewById(username);

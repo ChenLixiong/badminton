@@ -124,6 +124,13 @@ public class SingleFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        mList = null;
+        mAdapter = null;
+    }
+
     private void initview() {
         mEt_username = (EditText) mView.findViewById(R.id.username);
         mBtn_add = (Button) mView.findViewById(R.id.btn_add);
