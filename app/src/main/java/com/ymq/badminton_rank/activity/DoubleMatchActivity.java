@@ -2,7 +2,6 @@ package com.ymq.badminton_rank.activity;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -14,10 +13,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.ymq.badminton_rank.R;
 import com.ymq.badminton_rank.swissrule.Member;
 import com.ymq.badminton_rank.swissrule.SwissRule;
@@ -44,11 +39,6 @@ public class DoubleMatchActivity extends AppCompatActivity {
     private ArrayList<Member[]> mVsList;
     private Button mBtn_score;
     private HashMap<Integer, ArrayList<Member>> mMap;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient mClient;
     private ArrayList<Member> mList;
 
 
@@ -99,8 +89,6 @@ public class DoubleMatchActivity extends AppCompatActivity {
         mBtn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //保存当前的名次
-//                backupCurrentRank();
                 int childCount = mScrollview_wrappper.getChildCount();
                 JSONObject curTurn = new JSONObject();
                 try {
@@ -149,8 +137,8 @@ public class DoubleMatchActivity extends AppCompatActivity {
                 //判断比赛是否完成
                 ArrayList<Member> members1 = mSwissrule.reloadDoubleList(mVsList);
                 currentCount += 1;
-                mSwissrule.resetMap(members1,currentCount,0,0);
-                if (currentCount > mTurn - 1 && mSwissrule.isFullOrder(getGameTimes(mList.size()),MyApplication.mode,currentCount)) {
+                mSwissrule.resetMap(members1,currentCount);
+                if (currentCount > mTurn - 1 && mSwissrule.isFullOrder()) {
                     //比赛完成，跳转到显示结果的页面
 
                     Intent intent = new Intent(DoubleMatchActivity.this, ResultActivity.class);
@@ -174,9 +162,7 @@ public class DoubleMatchActivity extends AppCompatActivity {
             }
         });
 
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        mClient = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
     }
 
     /**
@@ -188,7 +174,7 @@ public class DoubleMatchActivity extends AppCompatActivity {
         }
 
         MyApplication.templist = mList;
-        mSwissRule.resetMap(mList,currentCount,getGameTimes(mList.size()),MyApplication.mode);
+        mSwissRule.resetMap(mList,currentCount);
         final HashMap<Integer, ArrayList<Member>> map = mSwissRule.getMap();
 
         for (int i = currentCount ; i>=0; i--){
@@ -262,9 +248,10 @@ public class DoubleMatchActivity extends AppCompatActivity {
 
     private void initGame(ArrayList<Member> list, boolean isDouble) {
         mSwissrule = MyApplication.mSwissRule;
+        mSwissrule.getVsMemberVersion = MyApplication.version;
         mVsList = null;
-        mSwissrule.resetMap(list, currentCount,getGameTimes(list.size()),MyApplication.mode);
-        mMap = mSwissrule.printMap(currentCount);
+        mSwissrule.resetMap(list, currentCount);
+         mSwissrule.printMap(currentCount);
 //        mVsList = isDouble ? mSwissrule.getDoubleVsList() : mSwissrule.getSingleVsList();
         mVsList = mSwissrule.getDoubleVsList();
         mSwissrule.printVsList(mVsList, currentCount);//打印对阵关系
@@ -325,39 +312,4 @@ public class DoubleMatchActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    public Action getIndexApiAction() {
-        Thing object = new Thing.Builder()
-                .setName("DoubleMatch Page") // TODO: Define a title for the content shown.
-                // TODO: Make sure this auto-generated URL is correct.
-                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
-                .build();
-        return new Action.Builder(Action.TYPE_VIEW)
-                .setObject(object)
-                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
-                .build();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        mClient.connect();
-        AppIndex.AppIndexApi.start(mClient, getIndexApiAction());
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        AppIndex.AppIndexApi.end(mClient, getIndexApiAction());
-        mClient.disconnect();
-    }
 }

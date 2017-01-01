@@ -23,7 +23,7 @@ public class MyApplication extends Application {
     public static ArrayList<Member> mSingle_tempList ;
     public static ArrayList<Member> mSingle_collect_member_list;
     public static ArrayList<Member> mSingle_members1_intent;
-    public static int mode = 0;
+    public static int version = 2;
     private WindowManager.LayoutParams windowParams = new WindowManager.LayoutParams();
         public WindowManager.LayoutParams getWindowParams() {
             return windowParams;

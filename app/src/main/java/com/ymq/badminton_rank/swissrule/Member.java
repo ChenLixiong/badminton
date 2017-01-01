@@ -37,25 +37,16 @@ public abstract class Member implements Serializable{
 	public abstract VsMember inVsList(Member m);
 	public abstract Member inCoList(Member m);
 	public abstract boolean isDoubleVs();
-	// -1 精确模式  1 默认模式
-	public int isBiger(Member m,int times,int mode , int currentTurn) {
-		/*long self = 0;
-		long other = 0;
-		if (mode<=0 || currentTurn < times){
-			//精确模式
-			self = bigscore*1000000+smallscore*10000;
-			other = m.bigscore*1000000+m.smallscore*10000;
-		}else{//默认模式 超过了指定的局数之后加入winBalls参数
-			self = bigscore*1000000+smallscore*10000 +winballs;
-			other = m.bigscore*1000000+m.smallscore*10000 + winballs;
-		}*/
+
+	public int isBiger(Member m) {
+
 		long self = bigscore*1000000+smallscore*10000;
 		long other = m.bigscore*1000000+m.smallscore*10000;
 		if(self > other) return 1;
 		else if(self < other) return -1;
 		else {
 			VsMember vsm = inVsList(m);
-			if(vsm == null) { //δ����ս
+			if(vsm == null) {
 				return 0;
 			}else if(vsm.winscore == 1) {
 				return 1;

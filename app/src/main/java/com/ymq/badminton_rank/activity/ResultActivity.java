@@ -132,7 +132,7 @@ public class ResultActivity extends BaseActivity {
         }*/
         mSwissrule = MyApplication.mSwissRule;
         mVsList = null;
-        mSwissrule.resetMap(list, currentCount,getGameTimes(list.size()),MyApplication.mode);
+        mSwissrule.resetMap(list, currentCount);
         mSwissrule.printMap(currentCount);
 //        mSwissrule.printMap(currentCount);
         HashMap<Integer, ArrayList<Member>> map = mSwissrule.getMap();

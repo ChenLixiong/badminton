@@ -104,8 +104,8 @@ public class MatchActivity extends BaseActivity {
                 //是否比赛排名完成
                 ArrayList<Member> members1 = mSwissrule.reloadSingleList(mVsList);
                 currentCount += 1;
-                mSwissrule.resetMap(members1,currentCount,0,0);
-                if(currentCount>mTurn -1 && mSwissrule.isFullOrder(getGameTimes(list.size()),MyApplication.mode,currentCount)) {	//检查是否可以全部排出胜负，如果ok则停止比赛
+                mSwissrule.resetMap(members1,currentCount);
+                if(currentCount>mTurn -1 && mSwissrule.isFullOrder()) {	//检查是否可以全部排出胜负，如果ok则停止比赛
                         //跳转到显示最终排名的界面
                         Intent intent = new Intent(MatchActivity.this,ResultActivity.class);
 //                        intent.putExtra("data", members1);
@@ -181,8 +181,9 @@ public class MatchActivity extends BaseActivity {
     }
     private void initGame(ArrayList<Member> list,  boolean isDouble) {
         mSwissrule = MyApplication.mSwissRule;
+        mSwissrule.getVsMemberVersion = MyApplication.version;
         mVsList = null;
-        mSwissrule.resetMap(list,currentCount,getGameTimes(list.size()),MyApplication.mode);
+        mSwissrule.resetMap(list,currentCount);
         mSwissrule.printMap(currentCount);
 
         mVsList = mSwissrule.getSingleVsList();

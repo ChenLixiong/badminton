@@ -27,10 +27,6 @@ import com.ymq.badminton_rank.adapter.GridViewAdapter;
 import com.ymq.badminton_rank.swissrule.DoubleMember;
 import com.ymq.badminton_rank.swissrule.SwissRule;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 
 import static com.ymq.badminton_rank.R.id.username;
@@ -115,7 +111,7 @@ public class DoubleFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), DoubleMatchActivity.class);
                 int turn = SwissRule.getMinTurnCount(mList.size());
                 //将数据保存为json格式
-                JSONObject game_user = new JSONObject();
+                /*JSONObject game_user = new JSONObject();
                 JSONArray users = new JSONArray();
                 for (int i = 0 ;i <mList.size(); i++){
                     JSONObject user = new JSONObject();
@@ -133,7 +129,7 @@ public class DoubleFragment extends Fragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Log.d(TAG, "onClick: "+game_user.toString());
+                Log.d(TAG, "onClick: "+game_user.toString());*/
                 SharedPreferences sharedPreferences = getActivity().getSharedPreferences("turns", Context.MODE_PRIVATE);
                 sharedPreferences.edit().putInt("turn",turn).commit();
                 MyApplication.mCollect_member_list.addAll(mList);

@@ -39,10 +39,10 @@ public class ScoreActivity extends AppCompatActivity {
         int currentCount = intent.getIntExtra("currentCount", 1);
         boolean isDouble = intent.getBooleanExtra("isDouble",true);
         if (isDouble){
-            mSwissRule.resetMap(list,currentCount,getGameTimes(list.size()),MyApplication.mode);
+            mSwissRule.resetMap(list,currentCount);
 
         }else {
-            mSwissRule.resetMap(single_list,currentCount,getGameTimes(single_list.size()),MyApplication.mode);
+            mSwissRule.resetMap(single_list,currentCount);
         }
         final HashMap<Integer, ArrayList<Member>> map = mSwissRule.getMap();
 

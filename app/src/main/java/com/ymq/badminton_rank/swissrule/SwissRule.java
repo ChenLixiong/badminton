@@ -5,34 +5,43 @@ import com.ymq.badminton_rank.badminton.MathEx;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+
+
 public class SwissRule {
 	public static final int NEIGHBORVS = 0;	//ͬ��֣�����С��pk
 	public static final int MAXVSMIN = 1;	//ͬ��֣�������СС��pk
 	public static final int MAXVSLOWER = 0;	//���С����PK�ͷ���
 	public static final int LOWERUP = 1;	//�ͷ��߽������߷������һ��
+	public static final int V0 = 0;
+	public static final int V1 = 1;
+	public static final int V2 = 2;
 	protected HashMap<Integer,ArrayList<Member>> mMap = null;
 	protected int curTurn = 0;
 	protected int maxScore = 0;
 	private int mMembers = 0;
 	public int vsRuleOfSameScoreGroup = NEIGHBORVS;	//ͬ����PK����
 	public int vsRuleOfOddGroup = MAXVSLOWER;
-	public double allowSameScorePercent = 0.1;	//Ϊ�˼ӿ�������������ֺ�ʣ��һ������ͬ���߿���С��Χ���������ⳡ�ι���
-
-	public HashMap<Integer, ArrayList<Member>> getMap() {
-		return mMap;
-	}
-
+	public int getVsMemberVersion = V2;
+	public double allowSameScorePercent = 0.0;	//Ϊ�˼ӿ�������������ֺ�ʣ��һ������ͬ���߿���С��Χ���������ⳡ�ι���
+	
 	public SwissRule() {
 		mMap = new HashMap<Integer,ArrayList<Member>>();		
 	}
-	protected ArrayList<Member> insertToList(ArrayList<Member> newlist,Member m ,int currentTurn,int times,int mode) {
+	public HashMap<Integer, ArrayList<Member>> getMap() {
+		if (mMap!=null){
+			return mMap;
+
+		}
+		return null ;
+	}
+	protected ArrayList<Member> insertToList(ArrayList<Member> newlist,Member m) {
 		if(newlist.size() ==0) {
 			newlist.add(m);
 			return newlist;
 		}
 		int i = 0;
 		for( i=0;i<newlist.size();i++) {
-			if(m.isBiger(newlist.get(i),times,mode,currentTurn) == 1) {
+			if(m.isBiger(newlist.get(i)) == 1) {
 				newlist.add(i,m);
 				break;
 			}
@@ -43,47 +52,102 @@ public class SwissRule {
 		return newlist;
 	}
 	
-	public void resetMap(ArrayList<Member> memberlist,int turn,int times,int mode) {
+	public void resetMap(ArrayList<Member> memberlist,int turn) {
 		curTurn = turn;
 		mMap.clear();
 		this.mMembers = memberlist.size();
 		for(int i=0;i<memberlist.size();i++) {
 			ArrayList<Member> list = mMap.get(memberlist.get(i).bigscore);
 			if(list == null ) list = new ArrayList<Member>();
-			list = insertToList(list,memberlist.get(i),curTurn,times,mode);
+			list = insertToList(list,memberlist.get(i));
 			mMap.put(Integer.valueOf(memberlist.get(i).bigscore), list);
 			this.maxScore = Math.max(this.maxScore, memberlist.get(i).bigscore);
-//			printMap(turn);
 		}
 	}
-	private Member[] getVsMember(Member m,ArrayList<Member> list) {
+	/*
+	 * version = V0 第一候选人的对手必须都没打过
+	 * version = V1 对手优先选择第一候选人都没打过的对手
+	 * version = V2 对手只要没合作过就行了
+	 */
+	private Member[] getVsMember(Member m,ArrayList<Member> list,int version) {
 		if(! m.isDoubleVs()) return null;
 		
 		Member[] retArr = new Member[4];
 		ArrayList<Member> notCo = new ArrayList<Member>();
+		ArrayList<Member> allNotVs = new ArrayList<Member>();
 		ArrayList<Member> notVs = new ArrayList<Member>();
-
+		
+		// find all members that didn't co or vs with the m;
 		for(int i=0;i<list.size();i++) {
 			Member tm = list.get(vsRuleOfSameScoreGroup == NEIGHBORVS?i:list.size()-1-i);
 			if(m.inCoList(tm) == null) {
 				notCo.add(tm);
 			}
+			if(m.inVsList(tm) == null) {
+				allNotVs.add(tm);
+			}
 		}
 		if(notCo.size()==0)  {
 			return null;
 		}
-		for(int i=0;i<list.size() && notVs.size()<2;i++) {
-			Member tm = list.get(vsRuleOfSameScoreGroup == NEIGHBORVS?i:list.size()-1-i);
-			if(m.inVsList(tm) == null) {
-				if(!notCo.contains(tm)) {
-					notVs.add(tm);
-				}else if(notCo.size()>1) {
-					notVs.add(tm);
-					notCo.remove(tm);
+		//get all couple in the allnotVs array that the couple'member didn't co each other;
+		ArrayList<ArrayList<Member>> allcouple = new ArrayList<ArrayList<Member>>();
+		if(version == V0 || version == V1) {
+			for(int i=0;i<allNotVs.size()-1;i++) {
+				for(int j=i+1;j<allNotVs.size();j++) {
+					if(allNotVs.get(i).inCoList(allNotVs.get(j)) == null) {
+						ArrayList<Member> couple = new ArrayList<Member>();
+						couple.add(allNotVs.get(i));
+						couple.add(allNotVs.get(j));
+						allcouple.add(couple);
+					}
 				}
 			}
 		}
-		if(notVs.size()<2) {
+		if(version == V1 || version == V2) {
+			for(int i=0;i<list.size()-1;i++) {
+				for(int j=i+1;j<list.size();j++) {
+					if(list.get(i).inCoList(list.get(j)) == null) {
+						ArrayList<Member> couple = new ArrayList<Member>();
+						couple.add(list.get(i));
+						couple.add(list.get(j));
+						allcouple.add(couple);
+					}
+				}
+			}
+		}
+		if(allcouple.size() == 0) {
+			return null;
+		}
+		//find the first couple that did not conflict with the notCo array;
+		for(int i=0;i<allcouple.size();i++) {
+			if(notCo.contains(allcouple.get(i).get(0)) && notCo.contains(allcouple.get(i).get(1)) && notCo.size()>2) {
+				//if notCo contain the 2 members of the couple and notCo size >2, this is ok!!
+				notCo.remove(allcouple.get(i).get(0));
+				notCo.remove(allcouple.get(i).get(1));
+				notVs.add(allcouple.get(i).get(0));
+				notVs.add(allcouple.get(i).get(1));
+				break;
+			}else if(notCo.contains(allcouple.get(i).get(0)) && !notCo.contains(allcouple.get(i).get(1)) && notCo.size()>1) {
+				//if notCo contain the first members of the couple and notCo size >1, this is ok!!
+				notCo.remove(allcouple.get(i).get(0));
+				notVs.add(allcouple.get(i).get(0));
+				notVs.add(allcouple.get(i).get(1));
+				break;
+			}else if(!notCo.contains(allcouple.get(i).get(0)) && notCo.contains(allcouple.get(i).get(1)) && notCo.size()>1) {
+				//if notCo contain the second members of the couple and notCo size >1, this is ok!!
+				notCo.remove(allcouple.get(i).get(1));
+				notVs.add(allcouple.get(i).get(0));
+				notVs.add(allcouple.get(i).get(1));
+				break;
+			}else if(!notCo.contains(allcouple.get(i).get(0)) && !notCo.contains(allcouple.get(i).get(1))) {
+				//if notCo did not contain any member of the couple, this is very ok!!
+				notVs.add(allcouple.get(i).get(0));
+				notVs.add(allcouple.get(i).get(1));
+				break;
+			}
+		}
+		if(notVs.size()<2) {			
 			return null;
 		}
 		retArr[0] = m;
@@ -124,8 +188,8 @@ public class SwissRule {
 			while(curList.size()>0) {
 				Member m1 = curList.get(0);					
 				curList.remove(0);					
-				//Ѱ����ӳ�Ա
-				Member[] retArr = getVsMember(m1,curList);
+				//核心修改：增加了三个版本的函数
+				Member[] retArr = getVsMember(m1,curList,getVsMemberVersion);
 				if(retArr == null) { //û����ͬ�����ҵ����ʵ���ԣ��ӵ���һ����ȥ
 					if(nextList == null || nextList.size() == 0) {	//û����һ��ɴ��ֿ�
 						Member[] mm = new Member[4];
@@ -188,7 +252,7 @@ public class SwissRule {
 				int nextpos = 0;
 				Member lower = null;	//Ϊ�˷�ֹm1ͬ���Ҳ����������ֶ�m1��lowerû�Թ���m1��vsLowerLuck!=0,��������»��ǻ����lower��m1,
 				int lowerpos = 0;
-				for(int v = 0;v<curList.size();v++) {
+				for(int v = 0;v<curList.size();v++) {					
 					nextpos = (this.vsRuleOfSameScoreGroup == NEIGHBORVS)?0+v:curList.size()-1-v;
 					m2 = curList.get(nextpos);
 					if(m1.inVsList(m2) == null) {
@@ -240,7 +304,7 @@ public class SwissRule {
 		}
 		return vsList;		
 	}
-	public boolean isFullOrder(int times,int mode , int currentTurn ) {
+	public boolean isFullOrder() {
 		double sameCount = 0;
 		ArrayList<Member> samelist = new ArrayList<Member>();
 		for(Integer i:mMap.keySet()) {
@@ -249,7 +313,7 @@ public class SwissRule {
 			Member m0 = ms.get(0);
 			for(int k=1;k<ms.size();k++) {
 				Member m1 = ms.get(k);
-				int issame = m0.isBiger(m1,times,mode,currentTurn);
+				int issame = m0.isBiger(m1);
 				if(issame == 0) {
 					if(!samelist.contains(m0))
 						samelist.add(m0);
@@ -260,7 +324,7 @@ public class SwissRule {
 			}
 		}
 		sameCount = samelist.size();
-		System.out.println("Same score count is "+ sameCount+"," +sameCount/((double)mMembers));
+		//System.out.println("Same score count is "+ sameCount+"," +sameCount/((double)mMembers));
 		if(sameCount/((double)mMembers) > this.allowSameScorePercent) {
 			return false;
 		}
@@ -284,23 +348,43 @@ public class SwissRule {
 		System.out.print("\n\n");
 		
 	}
-	/*private void test(ArrayList<Member> list,boolean isDouble) {
+	private ArrayList<Integer> test(ArrayList<Member> list,boolean isDouble) {
 		int members = list.size();
 		ArrayList<Member[]> vsList = null;
 		int turn  = getMinTurnCount(members);
-		System.out.println("the turncount is "+turn+"\n---------------------");
-		for(int i=0;i<members-2;i++) {			
+		//System.out.println("\n"+members + " join the game.");
+		int i = 0;
+		int gameOver = 0;
+		int longTime = 0;
+		for(i=0;i<2*members;i++) {			
 			resetMap(list,i);
-			printMap(i);
+			//printMap(i);
 			if(i>turn-1 && isFullOrder()) {	//����Ƿ����ȫ���ų�ʤ�������ok��ֹͣ����
+//				System.out.println("turn " + i + ", game is over!!\n");
+//				printMap(i);
+				gameOver = 1;
 				break;
+			}else {
+				//System.out.print("turn " + i + "--\n");
+				//printMap(i);
 			}
 			vsList =isDouble? getDoubleVsList():getSingleVsList();			
-			printVsList(vsList,i);
-			list =isDouble? reloadDoubleList(vsList):reloadSingleList(vsList);	//ģ��ʤ��
+			//printVsList(vsList,i);
+			list =isDouble? reloadDoubleList(vsList):reloadSingleList(vsList);	//ģ��ʤ��			
 		}
-	}*/
-	/*public void SingleTest(int members) {
+		if(i>members-2) {
+			//System.out.println("long time race######################");
+			//printMap(i-1);
+			longTime = 1;
+		}
+		ArrayList<Integer> ret = new ArrayList<Integer>();
+		ret.add(i);
+		ret.add(gameOver);
+		ret.add(longTime);
+		//System.out.println("------------------------------------");
+		return ret;
+	}
+	public void SingleTest(int members) {
 		ArrayList<Member> list = new ArrayList<Member>();
 		for(int i=0;i<members;i++) {
 			SingleMember m = new SingleMember();
@@ -308,18 +392,17 @@ public class SwissRule {
 			list.add(m);		
 		}
 		test(list,false);
-	}*/
-	/*public void DoubleTest(int members) {
+	}
+	public ArrayList<Integer> DoubleTest(int members) {
 		ArrayList<Member> list = new ArrayList<Member>();
 		for(int i=0;i<members;i++) {
 			DoubleMember m = new DoubleMember();
 			m.id = i+1;
 			list.add(m);		
 		}
-		test(list,true);
-	}*/
-	public HashMap<Integer,ArrayList<Member>> printMap(int turn) {
-
+		return test(list,true);
+	}
+	public void printMap(int turn) {
 		System.out.println("The turn "+turn+" score map:");
 		for(Integer i:mMap.keySet()) {
 			ArrayList<Member> ms = mMap.get(i);
@@ -329,20 +412,6 @@ public class SwissRule {
 			}
 			System.out.printf("]\n");
 		}
-
-
-		/*for(int i = 0 ;i< mMap.keySet().size();i++){
-			ArrayList<Member> ms = mMap.get(i);
-			System.out.printf("%d:[",i);
-			if (ms!=null){
-				for(int k=0;k<ms.size();k++) {
-					System.out.printf("%s,",ms.get(k));
-				}
-			}
-
-			System.out.printf("]\n");
-		}*/
-		return mMap;
 	}
 	public  ArrayList<Member> reloadDoubleList(ArrayList<Member[]> vsList) {
 		 ArrayList<Member> list = new  ArrayList<Member>();
@@ -352,7 +421,7 @@ public class SwissRule {
 			Member m2 = arr[1];
 			Member v1 = arr[2];
 			Member v2 = arr[3];
-			if(m2 == null) {
+			if(m2 == null) {	//m1�ֿգ���������û�л�ù�����ս-ʤ�������û���������һ�λ��ᡰ��ս-ʤ��
 				if(!m1.hasVsBye) {
 					m1.hasVsBye = true;
 					m1.bigscore++;
@@ -360,9 +429,8 @@ public class SwissRule {
 				}
 				list.add(m1);
 			}else {	//�������ʤ��
-//				int rnd = MathEx.randnumber(0,2);
-//				int rndWinBalls = MathEx.randnumber(2,18);
-
+				/*int rnd = MathEx.randnumber(0,2);
+				int rndWinBalls = MathEx.randnumber(2,18);*/
 				int rnd = -1;
 				int rndWinBalls = 0;
 				if (m1.currenscore >= v1.currenscore){
@@ -418,17 +486,16 @@ public class SwissRule {
 			Member[] arr = vsList.get(k);
 			Member m1 = arr[0];
 			Member m2 = arr[1];
-			if(m2 == null) {
+			if(m2 == null) {	//m1�ֿգ���������û�л�ù�����ս-ʤ�������û���������һ�λ��ᡰ��ս-ʤ��
 				if(!m1.hasVsBye) {
 					m1.hasVsBye = true;
 					m1.bigscore++;
 					m1.totalscore += m1.bigscore;
 				}
 				list.add(m1);
-			}else {	//判断胜负
+			}else {	//�������ʤ��
 //				int rnd = MathEx.randnumber(0,2);
 //				int rndVictorPoints = MathEx.randnumber(2,18);
-
 				int rnd = -1;
 				int rndVictorPoints = 0;
 				if (m1.currenscore >= m2.currenscore){

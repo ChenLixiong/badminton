@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
                 android:textColor="#fff"
-                android:text="模式"/>
+                android:text="版本"/>
             <Spinner
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
