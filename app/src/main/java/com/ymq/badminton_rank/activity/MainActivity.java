@@ -32,8 +32,8 @@ public class MainActivity extends BaseActivity {
         ArrayList<String> list = new ArrayList<>();
 //        list.add("精确");
 //        list.add("默认");
-        list.add("V2");
         list.add("V1");
+        list.add("V2");
         list.add("V0");
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
         TextView tv_mode = (TextView) findViewById(R.id.tv_mode);
